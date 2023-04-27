@@ -1,0 +1,755 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Measures.V1.xml">
+        <edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/PersonalData.xml">
+        <edmx:Include Alias="PersonalData" Namespace="com.sap.vocabularies.PersonalData.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="AuthorReadingManager" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Currencies" EntityType="AuthorReadingManager.Currencies">
+                    <NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+                </EntitySet>
+                <EntitySet Name="AuthorReadings" EntityType="AuthorReadingManager.AuthorReadings">
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="statusCode" Target="AuthorReadingStatusCodes"/>
+                    <NavigationPropertyBinding Path="participants" Target="Participants"/>
+                    <NavigationPropertyBinding Path="texts" Target="AuthorReadings_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="AuthorReadings_texts"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="AuthorReadings"/>
+                </EntitySet>
+                <EntitySet Name="Participants" EntityType="AuthorReadingManager.Participants">
+                    <NavigationPropertyBinding Path="parent" Target="AuthorReadings"/>
+                    <NavigationPropertyBinding Path="statusCode" Target="ParticipantStatusCodes"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Participants"/>
+                </EntitySet>
+                <EntitySet Name="AuthorReadingStatusCodes" EntityType="AuthorReadingManager.AuthorReadingStatusCodes">
+                    <NavigationPropertyBinding Path="texts" Target="AuthorReadingStatusCodes_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="AuthorReadingStatusCodes_texts"/>
+                </EntitySet>
+                <EntitySet Name="ParticipantStatusCodes" EntityType="AuthorReadingManager.ParticipantStatusCodes">
+                    <NavigationPropertyBinding Path="texts" Target="ParticipantStatusCodes_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="ParticipantStatusCodes_texts"/>
+                </EntitySet>
+                <EntitySet Name="Currencies_texts" EntityType="AuthorReadingManager.Currencies_texts"/>
+                <EntitySet Name="AuthorReadings_texts" EntityType="AuthorReadingManager.AuthorReadings_texts">
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="AuthorReadings_texts"/>
+                </EntitySet>
+                <EntitySet Name="AuthorReadingStatusCodes_texts" EntityType="AuthorReadingManager.AuthorReadingStatusCodes_texts"/>
+                <EntitySet Name="ParticipantStatusCodes_texts" EntityType="AuthorReadingManager.ParticipantStatusCodes_texts"/>
+                <FunctionImport Name="userInfo" Function="AuthorReadingManager.userInfo"/>
+            </EntityContainer>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+                <NavigationProperty Name="texts" Type="Collection(AuthorReadingManager.Currencies_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="AuthorReadingManager.Currencies_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="AuthorReadings">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="identifier" Type="Edm.String"/>
+                <Property Name="title" Type="Edm.String" MaxLength="100"/>
+                <Property Name="description" Type="Edm.String" MaxLength="500"/>
+                <Property Name="date" Type="Edm.DateTimeOffset"/>
+                <Property Name="maxParticipantsNumber" Type="Edm.Int32"/>
+                <Property Name="availableFreeSlots" Type="Edm.Int32"/>
+                <Property Name="participantsFeeAmount" Type="Edm.Decimal" Scale="2" Precision="6"/>
+                <NavigationProperty Name="currency" Type="AuthorReadingManager.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <NavigationProperty Name="statusCode" Type="AuthorReadingManager.AuthorReadingStatusCodes">
+                    <ReferentialConstraint Property="statusCode_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="statusCode_code" Type="Edm.Int32" DefaultValue="0"/>
+                <NavigationProperty Name="participants" Type="Collection(AuthorReadingManager.Participants)" Partner="parent">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <Property Name="projectID" Type="Edm.String"/>
+                <Property Name="projectObjectID" Type="Edm.String"/>
+                <Property Name="projectURL" Type="Edm.String"/>
+                <Property Name="projectSystem" Type="Edm.String"/>
+                <Property Name="eventMeshMessage" Type="Edm.String"/>
+                <NavigationProperty Name="texts" Type="Collection(AuthorReadingManager.AuthorReadings_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="AuthorReadingManager.AuthorReadings_texts"/>
+                <Property Name="statusCriticality" Type="Edm.Int32"/>
+                <Property Name="createProjectEnabled" Type="Edm.Boolean"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="AuthorReadingManager.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="AuthorReadingManager.AuthorReadings"/>
+            </EntityType>
+            <EntityType Name="Participants">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <NavigationProperty Name="parent" Type="AuthorReadingManager.AuthorReadings" Partner="participants">
+                    <ReferentialConstraint Property="parent_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="parent_ID" Type="Edm.Guid"/>
+                <Property Name="identifier" Type="Edm.String"/>
+                <Property Name="name" Type="Edm.String"/>
+                <Property Name="email" Type="Edm.String"/>
+                <Property Name="mobileNumber" Type="Edm.String"/>
+                <NavigationProperty Name="statusCode" Type="AuthorReadingManager.ParticipantStatusCodes">
+                    <ReferentialConstraint Property="statusCode_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="statusCode_code" Type="Edm.Int32" DefaultValue="1"/>
+                <Property Name="statusCriticality" Type="Edm.Int32"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="AuthorReadingManager.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="AuthorReadingManager.Participants"/>
+            </EntityType>
+            <EntityType Name="AuthorReadingStatusCodes">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="0"/>
+                <NavigationProperty Name="texts" Type="Collection(AuthorReadingManager.AuthorReadingStatusCodes_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="AuthorReadingManager.AuthorReadingStatusCodes_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="ParticipantStatusCodes">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="1"/>
+                <NavigationProperty Name="texts" Type="Collection(AuthorReadingManager.ParticipantStatusCodes_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="AuthorReadingManager.ParticipantStatusCodes_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <EntityType Name="Currencies_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="AuthorReadings_texts">
+                <Key>
+                    <PropertyRef Name="ID_texts"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID_texts" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="locale" Type="Edm.String" MaxLength="14"/>
+                <Property Name="ID" Type="Edm.Guid"/>
+                <Property Name="title" Type="Edm.String" MaxLength="100"/>
+                <Property Name="description" Type="Edm.String" MaxLength="500"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="AuthorReadingManager.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="AuthorReadingManager.AuthorReadings_texts"/>
+            </EntityType>
+            <EntityType Name="AuthorReadingStatusCodes_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="0"/>
+            </EntityType>
+            <EntityType Name="ParticipantStatusCodes_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.Int32" Nullable="false" DefaultValue="1"/>
+            </EntityType>
+            <ComplexType Name="userRoles">
+                <Property Name="identified" Type="Edm.Boolean"/>
+                <Property Name="authenticated" Type="Edm.Boolean"/>
+            </ComplexType>
+            <ComplexType Name="user">
+                <Property Name="user" Type="Edm.String"/>
+                <Property Name="locale" Type="Edm.String"/>
+                <Property Name="roles" Type="AuthorReadingManager.userRoles"/>
+            </ComplexType>
+            <Action Name="block" IsBound="true" EntitySetPath="_authorreading">
+                <Parameter Name="_authorreading" Type="AuthorReadingManager.AuthorReadings"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings"/>
+            </Action>
+            <Action Name="publish" IsBound="true" EntitySetPath="_authorreading">
+                <Parameter Name="_authorreading" Type="AuthorReadingManager.AuthorReadings"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="AuthorReadingManager.AuthorReadings"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="AuthorReadingManager.Participants"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="AuthorReadingManager.Participants"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="AuthorReadingManager.AuthorReadings_texts"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings_texts"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="AuthorReadingManager.AuthorReadings"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="AuthorReadingManager.AuthorReadings"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="AuthorReadingManager.AuthorReadings"/>
+            </Action>
+            <Action Name="cancelParticipation" IsBound="true" EntitySetPath="_participant">
+                <Parameter Name="_participant" Type="AuthorReadingManager.Participants"/>
+                <ReturnType Type="AuthorReadingManager.Participants"/>
+            </Action>
+            <Action Name="confirmParticipation" IsBound="true" EntitySetPath="_participant">
+                <Parameter Name="_participant" Type="AuthorReadingManager.Participants"/>
+                <ReturnType Type="AuthorReadingManager.Participants"/>
+            </Action>
+            <Function Name="userInfo" IsBound="false" IsComposable="false">
+                <ReturnType Type="AuthorReadingManager.user"/>
+            </Function>
+            <Annotations Target="AuthorReadingManager.Currencies">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AuthorReadingManager.Currencies/name">
+                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                </Annotations>
+                <Annotations Target="AuthorReadingManager.Currencies/descr">
+                    <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                    </Annotations>
+                    <Annotations Target="AuthorReadingManager.Currencies/code">
+                        <Annotation Term="Common.Text" Path="name"/>
+                        <Annotation Term="Common.Label" String="{i18n>CurrencyCode}"/>
+                        </Annotations>
+                        <Annotations Target="AuthorReadingManager.Currencies/symbol">
+                            <Annotation Term="Common.Label" String="{i18n>CurrencySymbol}"/>
+                            </Annotations>
+                            <Annotations Target="AuthorReadingManager.EntityContainer/AuthorReadings">
+                                <Annotation Term="PersonalData.DataSubjectRole" String="AuthorReadings"/>
+                                <Annotation Term="PersonalData.EntitySemantics" String="DataSubject"/>
+                                <Annotation Term="Common.DraftRoot">
+                                    <Record Type="Common.DraftRootType">
+                                        <PropertyValue Property="ActivationAction" String="AuthorReadingManager.draftActivate"/>
+                                        <PropertyValue Property="EditAction" String="AuthorReadingManager.draftEdit"/>
+                                        <PropertyValue Property="PreparationAction" String="AuthorReadingManager.draftPrepare"/>
+                                    </Record>
+                                </Annotation>
+                            </Annotations>
+                            <Annotations Target="AuthorReadingManager.AuthorReadings/createdAt">
+                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                <Annotation Term="Core.Immutable" Bool="true"/>
+                                <Annotation Term="Core.Computed" Bool="true"/>
+                                <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                                </Annotations>
+                                <Annotations Target="AuthorReadingManager.AuthorReadings/createdBy">
+                                    <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                    <Annotation Term="Core.Immutable" Bool="true"/>
+                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                    <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                        <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                                        </Annotations>
+                                        <Annotations Target="AuthorReadingManager.AuthorReadings/modifiedAt">
+                                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                            <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                                            </Annotations>
+                                            <Annotations Target="AuthorReadingManager.AuthorReadings/modifiedBy">
+                                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                    <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                                    </Annotations>
+                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/ID">
+                                                        <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                        <Annotation Term="Core.Computed" Bool="true"/>
+                                                        <Annotation Term="Common.Label" String="{i18n>uuid}"/>
+                                                        </Annotations>
+                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/identifier">
+                                                            <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                            <Annotation Term="Common.Label" String="{i18n>identifier}"/>
+                                                                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                            </Annotations>
+                                                            <Annotations Target="AuthorReadingManager.AuthorReadings/title">
+                                                                <Annotation Term="Common.Label" String="{i18n>title}"/>
+                                                                    <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                </Annotations>
+                                                                <Annotations Target="AuthorReadingManager.AuthorReadings/description">
+                                                                    <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                                    <Annotation Term="Common.Label" String="{i18n>description}"/>
+                                                                    </Annotations>
+                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/date">
+                                                                        <Annotation Term="Common.Label" String="{i18n>date}"/>
+                                                                            <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                        </Annotations>
+                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/maxParticipantsNumber">
+                                                                            <Annotation Term="Common.Label" String="{i18n>maxParticipantsNumber}"/>
+                                                                                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                            </Annotations>
+                                                                            <Annotations Target="AuthorReadingManager.AuthorReadings/availableFreeSlots">
+                                                                                <Annotation Term="Common.Label" String="{i18n>availableFreeSlots}"/>
+                                                                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                </Annotations>
+                                                                                <Annotations Target="AuthorReadingManager.AuthorReadings/participantsFeeAmount">
+                                                                                    <Annotation Term="PersonalData.IsPotentiallySensitive" Bool="true"/>
+                                                                                    <Annotation Term="Measures.ISOCurrency" Path="currency_code"/>
+                                                                                    <Annotation Term="Common.Label" String="{i18n>participantsFeeAmount}"/>
+                                                                                    </Annotations>
+                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/currency">
+                                                                                        <Annotation Term="Common.Label" String="{i18n>currency}"/>
+                                                                                        </Annotations>
+                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/currency_code">
+                                                                                            <Annotation Term="Common.Label" String="{i18n>currency}"/>
+                                                                                                <Annotation Term="Common.ValueList">
+                                                                                                    <Record Type="Common.ValueListType">
+                                                                                                        <PropertyValue Property="Label" String="{i18n>currency}"/>
+                                                                                                            <PropertyValue Property="CollectionPath" String="Currencies"/>
+                                                                                                            <PropertyValue Property="Parameters">
+                                                                                                                <Collection>
+                                                                                                                    <Record Type="Common.ValueListParameterInOut">
+                                                                                                                        <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                                                                                                        <PropertyValue Property="ValueListProperty" String="code"/>
+                                                                                                                    </Record>
+                                                                                                                    <Record Type="Common.ValueListParameterDisplayOnly">
+                                                                                                                        <PropertyValue Property="ValueListProperty" String="name"/>
+                                                                                                                    </Record>
+                                                                                                                </Collection>
+                                                                                                            </PropertyValue>
+                                                                                                        </Record>
+                                                                                                    </Annotation>
+                                                                                                </Annotations>
+                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadings/statusCode">
+                                                                                                    <Annotation Term="Common.Label" String="{i18n>statusCode}"/>
+                                                                                                    </Annotations>
+                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/statusCode_code">
+                                                                                                        <Annotation Term="Common.Label" String="{i18n>statusCode}"/>
+                                                                                                            <Annotation Term="Common.ValueList">
+                                                                                                                <Record Type="Common.ValueListType">
+                                                                                                                    <PropertyValue Property="Label" String="{i18n>statusCode}"/>
+                                                                                                                        <PropertyValue Property="CollectionPath" String="AuthorReadingStatusCodes"/>
+                                                                                                                        <PropertyValue Property="Parameters">
+                                                                                                                            <Collection>
+                                                                                                                                <Record Type="Common.ValueListParameterInOut">
+                                                                                                                                    <PropertyValue Property="LocalDataProperty" PropertyPath="statusCode_code"/>
+                                                                                                                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                                                                                                                </Record>
+                                                                                                                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                                                                                                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                                                                                                                </Record>
+                                                                                                                            </Collection>
+                                                                                                                        </PropertyValue>
+                                                                                                                    </Record>
+                                                                                                                </Annotation>
+                                                                                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                            </Annotations>
+                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadings/projectID">
+                                                                                                                <Annotation Term="Common.Label" String="{i18n>projectID}"/>
+                                                                                                                </Annotations>
+                                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadings/projectObjectID">
+                                                                                                                    <Annotation Term="Common.Label" String="{i18n>projectObjectID}"/>
+                                                                                                                    </Annotations>
+                                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/projectURL">
+                                                                                                                        <Annotation Term="Common.Label" String="{i18n>projectURL}"/>
+                                                                                                                        </Annotations>
+                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/projectSystem">
+                                                                                                                            <Annotation Term="Common.Label" String="{i18n>projectSystem}"/>
+                                                                                                                            </Annotations>
+                                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadings/eventMeshMessage">
+                                                                                                                                <Annotation Term="Common.Label" String="{i18n>eventMeshMessage}"/>
+                                                                                                                                </Annotations>
+                                                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadings/statusCriticality">
+                                                                                                                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>statusCriticality}"/>
+                                                                                                                                    </Annotations>
+                                                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings/createProjectEnabled">
+                                                                                                                                        <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>createProjectEnabled}"/>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/IsActiveEntity">
+                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/HasActiveEntity">
+                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/HasDraftEntity">
+                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings/DraftAdministrativeData">
+                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.block(AuthorReadingManager.AuthorReadings)">
+                                                                                                                                            <Annotation Term="Common.SideEffects">
+                                                                                                                                                <Record Type="Common.SideEffectsType">
+                                                                                                                                                    <PropertyValue Property="TargetEntities">
+                                                                                                                                                        <Collection>
+                                                                                                                                                            <NavigationPropertyPath>_authorreading</NavigationPropertyPath>
+                                                                                                                                                        </Collection>
+                                                                                                                                                    </PropertyValue>
+                                                                                                                                                </Record>
+                                                                                                                                            </Annotation>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.publish(AuthorReadingManager.AuthorReadings)">
+                                                                                                                                            <Annotation Term="Common.SideEffects">
+                                                                                                                                                <Record Type="Common.SideEffectsType">
+                                                                                                                                                    <PropertyValue Property="TargetEntities">
+                                                                                                                                                        <Collection>
+                                                                                                                                                            <NavigationPropertyPath>_authorreading</NavigationPropertyPath>
+                                                                                                                                                        </Collection>
+                                                                                                                                                    </PropertyValue>
+                                                                                                                                                </Record>
+                                                                                                                                            </Annotation>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.EntityContainer/Participants">
+                                                                                                                                            <Annotation Term="PersonalData.DataSubjectRole" String="AuthorReadings"/>
+                                                                                                                                            <Annotation Term="PersonalData.EntitySemantics" String="DataSubjectDetails"/>
+                                                                                                                                            <Annotation Term="Common.DraftNode">
+                                                                                                                                                <Record Type="Common.DraftNodeType">
+                                                                                                                                                    <PropertyValue Property="PreparationAction" String="AuthorReadingManager.draftPrepare"/>
+                                                                                                                                                </Record>
+                                                                                                                                            </Annotation>
+                                                                                                                                        </Annotations>
+                                                                                                                                        <Annotations Target="AuthorReadingManager.Participants/createdAt">
+                                                                                                                                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                                                                                            <Annotation Term="Core.Immutable" Bool="true"/>
+                                                                                                                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                                                                                                                                            </Annotations>
+                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/createdBy">
+                                                                                                                                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                                                                                                <Annotation Term="Core.Immutable" Bool="true"/>
+                                                                                                                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                                                                                                                                                    </Annotations>
+                                                                                                                                                    <Annotations Target="AuthorReadingManager.Participants/modifiedAt">
+                                                                                                                                                        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                                                                                                        <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                                                                                                                                                        </Annotations>
+                                                                                                                                                        <Annotations Target="AuthorReadingManager.Participants/modifiedBy">
+                                                                                                                                                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                                                                                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                            <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                                                                                                                                                </Annotations>
+                                                                                                                                                                <Annotations Target="AuthorReadingManager.Participants/ID">
+                                                                                                                                                                    <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                                                                                                                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>uuid}"/>
+                                                                                                                                                                    </Annotations>
+                                                                                                                                                                    <Annotations Target="AuthorReadingManager.Participants/parent">
+                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>authorReadingUUID}"/>
+                                                                                                                                                                        </Annotations>
+                                                                                                                                                                        <Annotations Target="AuthorReadingManager.Participants/parent_ID">
+                                                                                                                                                                            <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>authorReadingUUID}"/>
+                                                                                                                                                                            </Annotations>
+                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/identifier">
+                                                                                                                                                                                <Annotation Term="PersonalData.FieldSemantics" String="DataSubjectID"/>
+                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>identifier}"/>
+                                                                                                                                                                                    <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                <Annotations Target="AuthorReadingManager.Participants/name">
+                                                                                                                                                                                    <Annotation Term="PersonalData.IsPotentiallyPersonal" Bool="true"/>
+                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>name}"/>
+                                                                                                                                                                                        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.Participants/email">
+                                                                                                                                                                                        <Annotation Term="PersonalData.IsPotentiallySensitive" Bool="true"/>
+                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>email}"/>
+                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.Participants/mobileNumber">
+                                                                                                                                                                                            <Annotation Term="PersonalData.IsPotentiallySensitive" Bool="true"/>
+                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>mobileNumber}"/>
+                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/statusCode">
+                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>statusCode}"/>
+                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.Participants/statusCode_code">
+                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>statusCode}"/>
+                                                                                                                                                                                                        <Annotation Term="Common.ValueList">
+                                                                                                                                                                                                            <Record Type="Common.ValueListType">
+                                                                                                                                                                                                                <PropertyValue Property="Label" String="{i18n>statusCode}"/>
+                                                                                                                                                                                                                    <PropertyValue Property="CollectionPath" String="ParticipantStatusCodes"/>
+                                                                                                                                                                                                                    <PropertyValue Property="Parameters">
+                                                                                                                                                                                                                        <Collection>
+                                                                                                                                                                                                                            <Record Type="Common.ValueListParameterInOut">
+                                                                                                                                                                                                                                <PropertyValue Property="LocalDataProperty" PropertyPath="statusCode_code"/>
+                                                                                                                                                                                                                                <PropertyValue Property="ValueListProperty" String="code"/>
+                                                                                                                                                                                                                            </Record>
+                                                                                                                                                                                                                            <Record Type="Common.ValueListParameterDisplayOnly">
+                                                                                                                                                                                                                                <PropertyValue Property="ValueListProperty" String="name"/>
+                                                                                                                                                                                                                            </Record>
+                                                                                                                                                                                                                        </Collection>
+                                                                                                                                                                                                                    </PropertyValue>
+                                                                                                                                                                                                                </Record>
+                                                                                                                                                                                                            </Annotation>
+                                                                                                                                                                                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.Participants/statusCriticality">
+                                                                                                                                                                                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>statusCriticality}"/>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/IsActiveEntity">
+                                                                                                                                                                                                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/HasActiveEntity">
+                                                                                                                                                                                                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/HasDraftEntity">
+                                                                                                                                                                                                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Participants/DraftAdministrativeData">
+                                                                                                                                                                                                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.cancelParticipation(AuthorReadingManager.Participants)">
+                                                                                                                                                                                                                <Annotation Term="Common.SideEffects">
+                                                                                                                                                                                                                    <Record Type="Common.SideEffectsType">
+                                                                                                                                                                                                                        <PropertyValue Property="TargetEntities">
+                                                                                                                                                                                                                            <Collection>
+                                                                                                                                                                                                                                <NavigationPropertyPath>_participant</NavigationPropertyPath>
+                                                                                                                                                                                                                                <NavigationPropertyPath>_participant/parent</NavigationPropertyPath>
+                                                                                                                                                                                                                            </Collection>
+                                                                                                                                                                                                                        </PropertyValue>
+                                                                                                                                                                                                                    </Record>
+                                                                                                                                                                                                                </Annotation>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.confirmParticipation(AuthorReadingManager.Participants)">
+                                                                                                                                                                                                                <Annotation Term="Common.SideEffects">
+                                                                                                                                                                                                                    <Record Type="Common.SideEffectsType">
+                                                                                                                                                                                                                        <PropertyValue Property="TargetEntities">
+                                                                                                                                                                                                                            <Collection>
+                                                                                                                                                                                                                                <NavigationPropertyPath>_participant</NavigationPropertyPath>
+                                                                                                                                                                                                                                <NavigationPropertyPath>_participant/parent</NavigationPropertyPath>
+                                                                                                                                                                                                                            </Collection>
+                                                                                                                                                                                                                        </PropertyValue>
+                                                                                                                                                                                                                    </Record>
+                                                                                                                                                                                                                </Annotation>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes">
+                                                                                                                                                                                                                <Annotation Term="UI.Identification">
+                                                                                                                                                                                                                    <Collection>
+                                                                                                                                                                                                                        <Record Type="UI.DataField">
+                                                                                                                                                                                                                            <PropertyValue Property="Value" Path="name"/>
+                                                                                                                                                                                                                        </Record>
+                                                                                                                                                                                                                    </Collection>
+                                                                                                                                                                                                                </Annotation>
+                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes/name">
+                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes/descr">
+                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>codeListStatusText}"/>
+                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes/code">
+                                                                                                                                                                                                                        <Annotation Term="Common.Text" Path="descr">
+                                                                                                                                                                                                                            <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                                                                                                                                                                                                                        </Annotation>
+                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>codeListStatusCode}"/>
+                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.ParticipantStatusCodes">
+                                                                                                                                                                                                                            <Annotation Term="UI.Identification">
+                                                                                                                                                                                                                                <Collection>
+                                                                                                                                                                                                                                    <Record Type="UI.DataField">
+                                                                                                                                                                                                                                        <PropertyValue Property="Value" Path="name"/>
+                                                                                                                                                                                                                                    </Record>
+                                                                                                                                                                                                                                </Collection>
+                                                                                                                                                                                                                            </Annotation>
+                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.ParticipantStatusCodes/name">
+                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.ParticipantStatusCodes/descr">
+                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>codeListStatusText}"/>
+                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.ParticipantStatusCodes/code">
+                                                                                                                                                                                                                                    <Annotation Term="Common.Text" Path="descr">
+                                                                                                                                                                                                                                        <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                                                                                                                                                                                                                                    </Annotation>
+                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>codeListStatusCode}"/>
+                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.DraftAdministrativeData">
+                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftAdministrativeData}"/>
+                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.DraftAdministrativeData/DraftUUID">
+                                                                                                                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>Draft_DraftUUID}"/>
+                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.DraftAdministrativeData/CreationDateTime">
+                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Draft_CreationDateTime}"/>
+                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.DraftAdministrativeData/CreatedByUser">
+                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>Draft_CreatedByUser}"/>
+                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.DraftAdministrativeData/DraftIsCreatedByMe">
+                                                                                                                                                                                                                                                        <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsCreatedByMe}"/>
+                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.DraftAdministrativeData/LastChangeDateTime">
+                                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>Draft_LastChangeDateTime}"/>
+                                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.DraftAdministrativeData/LastChangedByUser">
+                                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Draft_LastChangedByUser}"/>
+                                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.DraftAdministrativeData/InProcessByUser">
+                                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>Draft_InProcessByUser}"/>
+                                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.DraftAdministrativeData/DraftIsProcessedByMe">
+                                                                                                                                                                                                                                                                        <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsProcessedByMe}"/>
+                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.Currencies_texts/locale">
+                                                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.Currencies_texts/name">
+                                                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.Currencies_texts/descr">
+                                                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                                                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.Currencies_texts/code">
+                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Text" Path="name"/>
+                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>CurrencyCode}"/>
+                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.EntityContainer/AuthorReadings_texts">
+                                                                                                                                                                                                                                                                                            <Annotation Term="Common.DraftNode">
+                                                                                                                                                                                                                                                                                                <Record Type="Common.DraftNodeType">
+                                                                                                                                                                                                                                                                                                    <PropertyValue Property="PreparationAction" String="AuthorReadingManager.draftPrepare"/>
+                                                                                                                                                                                                                                                                                                </Record>
+                                                                                                                                                                                                                                                                                            </Annotation>
+                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings_texts/locale">
+                                                                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadings_texts/ID">
+                                                                                                                                                                                                                                                                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>uuid}"/>
+                                                                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadings_texts/title">
+                                                                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>title}"/>
+                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+                                                                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadings_texts/description">
+                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>description}"/>
+                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings_texts/IsActiveEntity">
+                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings_texts/HasActiveEntity">
+                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings_texts/HasDraftEntity">
+                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadings_texts/DraftAdministrativeData">
+                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.Hidden" Bool="true"/>
+                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes_texts/locale">
+                                                                                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes_texts/name">
+                                                                                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes_texts/descr">
+                                                                                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>codeListStatusText}"/>
+                                                                                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.AuthorReadingStatusCodes_texts/code">
+                                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Text" Path="descr">
+                                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                                                                                                                                                                                                                                                                                                                        </Annotation>
+                                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>codeListStatusCode}"/>
+                                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                                        <Annotations Target="AuthorReadingManager.ParticipantStatusCodes_texts/locale">
+                                                                                                                                                                                                                                                                                                                            <Annotation Term="Common.Label" String="{i18n>LanguageCode}"/>
+                                                                                                                                                                                                                                                                                                                            </Annotations>
+                                                                                                                                                                                                                                                                                                                            <Annotations Target="AuthorReadingManager.ParticipantStatusCodes_texts/name">
+                                                                                                                                                                                                                                                                                                                                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                                                                                                                                                                                                                                                                                                </Annotations>
+                                                                                                                                                                                                                                                                                                                                <Annotations Target="AuthorReadingManager.ParticipantStatusCodes_texts/descr">
+                                                                                                                                                                                                                                                                                                                                    <Annotation Term="Common.Label" String="{i18n>codeListStatusText}"/>
+                                                                                                                                                                                                                                                                                                                                    </Annotations>
+                                                                                                                                                                                                                                                                                                                                    <Annotations Target="AuthorReadingManager.ParticipantStatusCodes_texts/code">
+                                                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Text" Path="descr">
+                                                                                                                                                                                                                                                                                                                                            <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                                                                                                                                                                                                                                                                                                                                        </Annotation>
+                                                                                                                                                                                                                                                                                                                                        <Annotation Term="Common.Label" String="{i18n>codeListStatusCode}"/>
+                                                                                                                                                                                                                                                                                                                                        </Annotations>
+                                                                                                                                                                                                                                                                                                                                    </Schema>
+                                                                                                                                                                                                                                                                                                                                </edmx:DataServices>
+                                                                                                                                                                                                                                                                                                                            </edmx:Edmx>

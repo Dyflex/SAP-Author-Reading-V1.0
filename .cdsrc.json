@@ -1,0 +1,33 @@
+{
+    "auth": {
+        "passport": {
+            "strategy": "mock",
+            "users": {
+                "Victor Pimentel": {
+                    "password": "welcome01",
+                    "ID": "victor.pimentel",
+                    "roles": [
+                        "AuthorReadingManagerRole-SAP",
+                        "authenticated-user"
+                    ]
+                },
+                "Peter Sellers": {
+                    "password": "welcome02",
+                    "ID": "pseller",
+                    "roles": [
+                        "AuthorReadingAdminRole-SAP",
+                        "authenticated-user"
+                    ]
+                },
+                "Julia Brunner": {
+                    "password": "welcome03",
+                    "ID": "jbrunner",
+                    "roles": [
+                        "authenticated-user"
+                    ]
+                },
+                "*": true
+            }
+        }
+    }
+}

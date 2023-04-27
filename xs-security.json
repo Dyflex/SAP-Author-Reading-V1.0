@@ -1,0 +1,47 @@
+{
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.AuthorReadingManagerRole-SAP",
+      "description": "AuthorReadingManagerRole-SAP"
+    },
+    {
+      "name": "$XSAPPNAME.AuthorReadingAdminRole-SAP",
+      "description": "AuthorReadingAdminRole-SAP"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "AuthorReadingManagerRole-SAP",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.AuthorReadingManagerRole-SAP"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "AuthorReadingAdminRole-SAP",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.AuthorReadingAdminRole-SAP"
+      ],
+      "attribute-references": []
+    }
+  ],
+  "role-collections": [
+    {
+        "name": "AuthorReadingManagerRoleCollection-SAP",
+        "description": "Author Reading Manager",
+        "role-template-references": [
+            "$XSAPPNAME.AuthorReadingManagerRole-SAP"
+        ]
+    },
+    {
+        "name": "AuthorReadingAdminRoleCollection-SAP",
+        "description": "Author Readings Administrator",
+        "role-template-references": [
+            "$XSAPPNAME.AuthorReadingAdminRole-SAP"
+        ]
+    }
+]
+}

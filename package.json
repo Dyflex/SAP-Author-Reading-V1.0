@@ -1,0 +1,50 @@
+{
+    "name": "author-readings",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@sap-cloud-sdk/connectivity": "^2.8.0",
+        "@sap/audit-logging": "^5.1.0",
+        "@sap/cds": "^6.7.0",
+        "@sap/xb-msg-amqp-v100": "^0.9.51",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "hdb": "0.19.1",
+        "passport": "^0.6.0",
+        "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "@sap/ux-specification": "^1.100.9",
+        "rimraf": "^3.0.2",
+        "sqlite3": "^5"
+    },
+    "engines": {
+        "node": "^14"
+    },
+    "scripts": {
+        "start": "cds-serve",
+        "watch-authorreadingmanager": "cds watch --open authorreadingmanager/webapp/index.html?sap-ui-xx-viewCache=false",
+        "undeploy": "cf undeploy author-readings --delete-services --delete-service-keys --delete-service-brokers",
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    },
+    "cds": {
+        "requires": {
+            "db": {
+                "kind": "sql"
+            },
+            "uaa": {
+                "kind": "xsuaa"
+            }
+        },
+        "hana": {
+            "deploy-format": "hdbtable"
+        }
+    },
+    "sapux": [
+        "app/authorreadingmanager"
+    ]
+}
