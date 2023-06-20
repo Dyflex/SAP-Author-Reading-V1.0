@@ -533,6 +533,8 @@ srv.on("userInfo", async (req) => {
     results.roles = {};
     results.roles.identified = req.user.is("identified-user");
     results.roles.authenticated = req.user.is("authenticated-user");
+    results.roles['AuthorReadingManagerRole'] = req.user.is("AuthorReadingManagerRole-SAP");
+    results.roles['AuthorReadingAdminRole'] = req.user.is("AuthorReadingAdminRole-SAP");
     return results;
 });
 

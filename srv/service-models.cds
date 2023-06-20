@@ -82,6 +82,8 @@ service AuthorReadingManager @(
     type userRoles {
         identified    : Boolean;
         authenticated : Boolean;
+        AuthorReadingManagerRole : Boolean;
+        AuthorReadingAdminRole : Boolean;
     };
 
     type user {
